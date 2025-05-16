@@ -1,7 +1,8 @@
-import React, { use } from 'react';
+import React, { use, useState } from 'react';
 
 const Users = ({usersPromise}) => {
-    const users = use(usersPromise);
+    const initialUsers = use(usersPromise);
+    const [users, setUsers] = useState(initialUsers)
     console.log(users);
 
     const handleAddUser = e =>{
@@ -12,17 +13,36 @@ const Users = ({usersPromise}) => {
        console.log(user);
 
        //create user in the server
-       fetch('http://localhost:3000/users',{
-            method  : 'POST',
-           headers: {
-            'Content-Type': 'application/json',
-           },
-           body:JSON.stringify(user)
-       })
-       .then(res => res.json())
-       .then(data =>{
-        console.log('datan after post', data)
-       });
+
+    //    fetch('http://localhost:3000/users',{
+    //         method  : 'POST',
+    //        headers: {
+    //         'Content-Type': 'application/json',
+    //        },
+    //        body:JSON.stringify(user)
+    //    })
+    //    .then(res => res.json())
+    //    .then(data =>{
+    //     console.log('datan after post', data)
+    //    });
+
+
+    fetch('http://localhost:3000/users',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+        },
+        body: JSON.stringify(user)
+    })
+        .then(res => res.json())
+        .then(data =>{
+            console.log('new user from serveer', data);
+            const newUsers = [...users, data];
+            setUsers(newUsers);
+            e.target.reset();
+        })
+    
+
     }
     return (
         <div>
@@ -37,7 +57,9 @@ const Users = ({usersPromise}) => {
 
             <div>
                 { 
-                users.map(user => <p key={user.id}>{user.name} : {user.email}</p>)
+                users.map(user => <p key={user.id}>{user.name} : {user.email}
+                <button>X</button>
+                </p>)
             }
             </div>
         </div>
